@@ -159,6 +159,13 @@ export default function SkinAnalysis() {
                 </div>
                 <h3 className="text-sm font-semibold text-white uppercase tracking-[0.2em] mb-1">Load Visual Data</h3>
                 <p className="text-[11px] text-[#71717a] mb-4 uppercase tracking-tighter">Drag subject into viewport or browse local records</p>
+                <div className="flex gap-2 justify-center mb-4">
+                  <span className={`text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-widest border ${
+                    process.env.GEMINI_API_KEY ? 'text-emerald-400 border-emerald-500/20 bg-emerald-500/5' : 'text-amber-400 border-amber-500/20 bg-amber-500/5'
+                  }`}>
+                    {process.env.GEMINI_API_KEY ? 'Neural Engine: Active' : 'Neural Engine: Simulation Mode'}
+                  </span>
+                </div>
                 <div className="flex gap-2 justify-center">
                   <span className="text-[9px] font-bold text-zinc-600 border border-zinc-800 bg-zinc-900 px-2 py-0.5 rounded">JPG</span>
                   <span className="text-[9px] font-bold text-zinc-600 border border-zinc-800 bg-zinc-900 px-2 py-0.5 rounded">PNG</span>
