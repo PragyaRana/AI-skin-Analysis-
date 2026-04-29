@@ -1,0 +1,6 @@
+{
+  "name": "GlowAI - Skin Analysis",
+  "description": "A premium AI-powered skin analysis application that detects conditions like acne, pigmentation, and wrinkles using camera capture and provides personalized reports.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": []
+}
