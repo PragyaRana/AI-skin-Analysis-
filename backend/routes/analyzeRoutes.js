@@ -1,9 +1,8 @@
-const express = require("express");
-const axios   = require("axios");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-const protect = require("../middleware/authMiddleware");
-const Report  = require("../models/Report");
-const User    = require("../models/User");
+import express from "express";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import protect from "../middleware/authMiddleware.js";
+import Report from "../models/Report.js";
+import User from "../models/User.js";
 
 const router = express.Router();
 
@@ -140,4 +139,4 @@ router.post("/", protect, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

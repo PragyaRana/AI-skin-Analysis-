@@ -1,6 +1,6 @@
-const express = require("express");
-const protect = require("../middleware/authMiddleware");
-const Report  = require("../models/Report");
+import express from "express";
+import protect from "../middleware/authMiddleware.js";
+import Report from "../models/Report.js";
 
 const router = express.Router();
 
@@ -26,4 +26,4 @@ router.delete("/:id", protect, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-module.exports = router;
+export default router;
