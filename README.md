@@ -1,20 +1,79 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# ✨ DermAI — AI Skin Analysis (MERN Stack)
 
-# Run and deploy your AI Studio app
+## Project Structure
+```
+dermai/
+├── backend/          ← Node.js + Express + MongoDB
+│   ├── middleware/authMiddleware.js
+│   ├── models/User.js
+│   ├── models/Report.js
+│   ├── routes/authRoutes.js
+│   ├── routes/uploadRoutes.js
+│   ├── routes/analyzeRoutes.js
+│   ├── routes/reportRoutes.js
+│   ├── .env
+│   ├── package.json
+│   └── server.js
+└── frontend/         ← React JSX + recharts
+    ├── public/index.html
+    └── src/
+        ├── components/Layout.jsx
+        ├── components/ScoreRing.jsx
+        ├── components/Toast.jsx
+        ├── context/AuthContext.jsx
+        ├── pages/Landing.jsx
+        ├── pages/Login.jsx
+        ├── pages/Register.jsx
+        ├── pages/Dashboard.jsx
+        ├── pages/Scan.jsx
+        ├── pages/Report.jsx
+        ├── pages/History.jsx
+        ├── pages/Profile.jsx
+        ├── services/api.js
+        ├── App.jsx
+        ├── index.js
+        └── index.css
+```
 
-This contains everything you need to run your app locally.
+## ▶️ Run Locally
 
-View your app in AI Studio: https://ai.studio/apps/dde18efa-36e7-442e-a0fd-41dd35ff9b68
+### Terminal 1 — Backend
+```bash
+cd backend
+npm install
+npm run dev
+# ✅ MongoDB Connected
+# 🚀 Server: http://localhost:5000
+```
 
-## Run Locally
+### Terminal 2 — Frontend
+```bash
+cd frontend
+npm install
+npm start
+# Opens http://localhost:3000
+```
 
-**Prerequisites:**  Node.js
+## How It Works
+```
+React (port 3000)
+  → proxy /api → Express (port 5000)
+     → /api/auth    → MongoDB (User model)
+     → /api/upload  → saves to /backend/uploads/
+     → /api/analyze → smart mock AI (or Python if running)
+     → /api/reports → MongoDB (Report model)
+```
 
+## MongoDB
+Your Atlas URI is pre-configured in backend/.env
+Database: dermai | Collections: users, reports
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Pages
+- / → Landing page
+- /login → Login
+- /register → Register  
+- /dashboard → Overview + charts
+- /scan → Upload photo or use webcam
+- /report/:id → Full AI report
+- /history → Past scans
+- /profile → User profile
