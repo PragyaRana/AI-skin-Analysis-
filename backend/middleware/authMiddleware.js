@@ -1,7 +1,7 @@
-const jwt  = require("jsonwebtoken");
-const User = require("../models/User");
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
-module.exports = async (req, res, next) => {
+const protect = async (req, res, next) => {
   try {
     const header = req.headers.authorization;
     if (!header?.startsWith("Bearer "))
@@ -15,3 +15,5 @@ module.exports = async (req, res, next) => {
     res.status(401).json({ error: "Invalid or expired token." });
   }
 };
+
+export default protect;

@@ -1,47 +1,62 @@
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config(); // MUST be first so all env vars are available
+
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import path from "path";
+import fs from "fs";
+
 import "./config/cloudinary.js";
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const path = require("path");
-const fs = require("fs");
-require("dotenv").config();
+
+import authRoutes from "./routes/authRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
+import analyzeRoutes from "./routes/analyzeRoutes.js";
+import reportRoutes from "./routes/reportRoutes.js";
 
 const app = express();
 
-// Create uploads directory if it doesn't exist
-const uploadsDir = path.join(__dirname, "uploads");
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+// uploads folder
+const uploadsDir = path.join(process.cwd(), "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
-// Middleware
-app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:3000", credentials: true }));
+// middleware
+app.use(cors({
+  origin: process.env.CLIENT_URL || "http://localhost:3000",
+  credentials: true
+}));
+
 app.use(express.json({ limit: "20mb" }));
 app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 
-// Serve uploaded images statically
 app.use("/uploads", express.static(uploadsDir));
 
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ MongoDB Error:", err.message));
+// mongodb
+mongoose.connect(process.env.MONGODB_URI)
+.then(() => console.log("✅ MongoDB Connected"))
+.catch(err => console.log("❌ MongoDB Error:", err.message));
 
-// Routes
-app.use("/api/auth",    require("./routes/authRoutes"));
-app.use("/api/upload",  require("./routes/uploadRoutes"));
-app.use("/api/analyze", require("./routes/analyzeRoutes"));
-app.use("/api/reports", require("./routes/reportRoutes"));
+// routes
+app.use("/api/auth", authRoutes);
+app.use("/api/upload", uploadRoutes);
+app.use("/api/analyze", analyzeRoutes);
+app.use("/api/reports", reportRoutes);
 
-// Health check
-app.get("/", (req, res) => res.json({ status: "🌿 DermAI API Running" }));
+// test route
+app.get("/", (req, res) => {
+  res.json({ status: "DermAI API Running" });
+});
 
-// Error handler
+// error handler
 app.use((err, req, res, next) => {
-  console.error(err.message);
-  res.status(500).json({ error: err.message || "Server error" });
+  console.error(err);
+  res.status(500).json({ error: err.message });
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server: http://localhost:${PORT}`));
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
