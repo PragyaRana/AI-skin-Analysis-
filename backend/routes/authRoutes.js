@@ -1,7 +1,7 @@
-const express = require("express");
-const jwt     = require("jsonwebtoken");
-const User    = require("../models/User");
-const protect = require("../middleware/authMiddleware");
+import express from "express";
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
+import protect from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 const sign = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
@@ -30,4 +30,4 @@ router.post("/login", async (req, res) => {
 
 router.get("/me", protect, (req, res) => res.json({ user: req.user }));
 
-module.exports = router;
+export default router;
