@@ -17,7 +17,7 @@ const reportSchema = new mongoose.Schema(
     dailyRoutine:     { morning: [String], evening: [String] },
     dietSuggestions:  [String],
     lifestyleChanges: [String],
-    productRecommendations: [{ type: String, name: String, reason: String }],
+    productRecommendations: [{ type: { type: String }, name: String, reason: String }],
     doctorConsultation: { required: { type: Boolean, default: false }, reason: String },
     status: { type: String, enum: ["pending", "completed", "failed"], default: "pending" },
   },
