@@ -1,5 +1,6 @@
 const express = require("express");
 const axios   = require("axios");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 const protect = require("../middleware/authMiddleware");
 const Report  = require("../models/Report");
 const User    = require("../models/User");
@@ -67,6 +68,41 @@ function mockAI(imageUrl) {
   };
 }
 
+async function geminiAnalysis(imageUrl) {
+  const genAI  = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  const model  = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+  const prompt = `
+    You are a professional dermatologist AI. Analyse this skin photo and return ONLY valid JSON with this exact structure:
+    {
+      "scores": { "overall": 70, "acne": 65, "glow": 68, "hydration": 62, "youth": 72, "symmetry": 75 },
+      "skin_age": 25,
+      "skin_type": "normal",
+      "issues_detected": [{ "name": "Mild Acne", "severity": "mild", "description": "..." }],
+      "remedies": ["..."],
+      "daily_routine": { "morning": ["..."], "evening": ["..."] },
+      "diet_suggestions": ["..."],
+      "lifestyle_changes": ["..."],
+      "product_recommendations": [{ "type": "Cleanser", "name": "...", "reason": "..." }],
+      "doctor_consultation": { "required": false, "reason": null }
+    }
+  `;
+
+  const response = await fetch(imageUrl);
+  const buffer   = await response.arrayBuffer();
+  const base64   = Buffer.from(buffer).toString("base64");
+  const mimeType = "image/jpeg";
+
+  const result = await model.generateContent([
+    prompt,
+    { inlineData: { data: base64, mimeType } }
+  ]);
+
+  const text = result.response.text();
+  const clean = text.replace(/```json|```/g, "").trim();
+  return JSON.parse(clean);
+}
+
 router.post("/", protect, async (req, res) => {
   try {
     const { imageUrl } = req.body;
@@ -76,11 +112,10 @@ router.post("/", protect, async (req, res) => {
 
     let ai;
     try {
-      const { data } = await axios.post(`${process.env.AI_ENGINE_URL||"http://localhost:8000"}/analyze`,
-        { image_url: imageUrl }, { timeout: 30000 });
-      ai = data;
-    } catch {
-      console.log("⚠️ Python AI offline — using mock");
+      ai = await geminiAnalysis(imageUrl);
+      console.log("✅ Gemini AI responded");
+    } catch (err) {
+      console.log("⚠️ Gemini failed — using mock:", err.message);
       ai = mockAI(imageUrl);
     }
 
